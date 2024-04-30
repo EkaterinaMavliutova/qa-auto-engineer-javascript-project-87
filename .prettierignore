@@ -1,0 +1,2 @@
+# Ignore .github/workflows (training project files that should not be deleted)
+.github/workflows
