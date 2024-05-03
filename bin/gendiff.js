@@ -2,6 +2,8 @@
 
 // import { program } from 'commander';
 import { Command } from 'commander';
+import { jsonGenDiff } from '../src/jsonGenDiff.js';
+
 const program = new Command();
 
 program
@@ -10,6 +12,9 @@ program
   .version('1.0.0')
   .argument('filepath1')
   .argument('filepath2')
-  .option('-f, --format <type>', 'output format');
+  .option('-f, --format <type>', 'output format')
+  .action((filepath1, filepath2) => {
+    jsonGenDiff(filepath1, filepath2);
+  });
 
 program.parse();

@@ -22,9 +22,33 @@ export const parseData = (data, parserFunction) => {
   return parsedData;
 };
 
-export const compareObjects = (objTocompare, objToCompareWith) => {
+export const compareObjects = (objToCompare, objToCompareWith) => {
+  if (isEmptyObj(objToCompare) || isEmptyObj(objToCompareWith)) {
+    return [];
+  }
+  const allKeys = Object.keys(objToCompare).concat(Object.keys(objToCompareWith));
+  const uniqueKeys = _.sortBy(allKeys);
+  const sortedUniqueKeys = _.sortedUniq(uniqueKeys);
 
-  return differencesArray;
+  const differences = sortedUniqueKeys.reduce((acc, item) => {
+    const isInObjToCompare = Object.hasOwn(objToCompare, item);
+    const isInObjToCompareWith = Object.hasOwn(objToCompareWith, item);
+    const isSameValue = objToCompare[item] === objToCompareWith[item];
+    const isEqual = isInObjToCompare && isInObjToCompareWith && isSameValue;
+
+    if (isEqual) {
+      acc.push(`  ${item}: ${objToCompare[item]}`);
+    } else {
+    if (isInObjToCompare) {
+      acc.push(`- ${item}: ${objToCompare[item]}`);
+    }
+    if (isInObjToCompareWith) {
+      acc.push(`+ ${item}: ${objToCompareWith[item]}`)
+    }
+    }
+    return acc;
+}, []);
+  return differences;
 };
 
 export const formatStrings = (someStrings, formatterFunction) => {
