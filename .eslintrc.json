@@ -1,5 +1,6 @@
 {
     "env": {
+        "jest/globals": true,
         "browser": false,
         "es2021": true,
         "node": true
@@ -10,6 +11,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "no-underscore-dangle": [2, { "allow": ["__filename", "__dirname"] }],
         "no-console": "off",
         "import/extensions": [
             "error",
