@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: make ci
+    - run: make install
     - run: make lint
     - run: make test
     - name: Test & publish code coverage
