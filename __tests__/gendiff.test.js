@@ -111,7 +111,7 @@ describe('genDiff', () => {
     const logSpy = jest.spyOn(global.console, 'log').mockImplementation();
     genDiff(pathToFile, '__fixtures__/file2.json');
     expect(logSpy).toHaveBeenCalledWith(
-      `{\n- follow: false\n  host: hexlet.io\n- proxy: 123.234.53.22\n- timeout: 50\n+ timeout: 20\n+ verbose: true\n}`,
+      '{\n- follow: false\n  host: hexlet.io\n- proxy: 123.234.53.22\n- timeout: 50\n+ timeout: 20\n+ verbose: true\n}',
     );
     logSpy.mockRestore();
   });
