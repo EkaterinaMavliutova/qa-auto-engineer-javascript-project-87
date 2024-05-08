@@ -1,4 +1,4 @@
-import {jest} from '@jest/globals';
+import { jest } from '@jest/globals';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -21,9 +21,9 @@ test('parse valid json', () => {
 test('parse invalid json', () => {
   const fileBuff = readFile('bad.json');
   const logSpy = jest.spyOn(global.console, 'error').mockImplementation();
-    parseJson(fileBuff);
-    expect(logSpy).toHaveBeenCalledWith('parser error: failed to parse data as JSON');
-    logSpy.mockRestore();
+  parseJson(fileBuff);
+  expect(logSpy).toHaveBeenCalledWith('parser error: failed to parse data as JSON');
+  logSpy.mockRestore();
 });
 test('parse empty json', () => {
   const fileBuff = readFile('empty.json');

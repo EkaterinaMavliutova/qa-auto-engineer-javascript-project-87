@@ -6,7 +6,7 @@ import { parseJson, parseYaml } from './parsers.js';
 
 export const isEmptyObj = (someObject) => {
   if (typeof someObject === 'object') {
-    return Object.keys(someObject).length === 0
+    return Object.keys(someObject).length === 0;
   }
   return undefined;
 };
@@ -16,17 +16,17 @@ export const readFile = (filePath) => {
     return undefined;
   }
   try {
-  if (path.isAbsolute(filePath)) {
-    return fs.readFileSync(filePath);
-  }
-  const currentDir = process.cwd();
-  const absolutePath = path.resolve(currentDir, filePath);
+    if (path.isAbsolute(filePath)) {
+      return fs.readFileSync(filePath);
+    }
+    const currentDir = process.cwd();
+    const absolutePath = path.resolve(currentDir, filePath);
     return fs.readFileSync(absolutePath);
   } catch {
     throw new Error('failed to read file at current directory');
   }
 };
-//console.log(readFile('__fixtures__/empty copy.json'));
+// console.log(readFile('__fixtures__/empty copy.json'));
 export const parseData = (data, dataFormat) => {
   const yamlFormats = ['.yaml', '.yml'];
   if (dataFormat === '.json') {
