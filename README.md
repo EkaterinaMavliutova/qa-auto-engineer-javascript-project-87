@@ -4,7 +4,7 @@
 **GenDiff**
 
 ## Installation
->note: the current version of Brain Games requires Node.js v20.11.1 or higher
+>note: the current version of GenDiff requires Node.js v20.11.1 or higher
 * clone this repository
 * to install required dependencies:
 ```
