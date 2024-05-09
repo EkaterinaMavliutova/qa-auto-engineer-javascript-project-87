@@ -1,15 +1,8 @@
 import { jest } from '@jest/globals';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
-import fs from 'node:fs';
 import {
   isEmptyObj, readFile, parseData, compareObjects, genDiff,
 } from '../src/gendiff.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const getFixturePath = (fileName) => path.join(__dirname, '..', '__fixtures__', fileName);
-const readTestFile = (fileName) => fs.readFileSync(getFixturePath(fileName));
+import { getFixturePath, readTestFile } from './forTests.js';
 
 describe('isEmptyObj', () => {
   test('with empty object', () => {
@@ -51,12 +44,36 @@ describe('parseData', () => {
       follow: false,
     });
   });
-
   test('with json : invalid data', () => {
     const fileBuff = readTestFile('bad.json');
     const logSpy = jest.spyOn(global.console, 'error').mockImplementation();
     parseData(fileBuff, '.json');
     expect(logSpy).toHaveBeenCalledWith('parser error: failed to parse data as JSON');
+    logSpy.mockRestore();
+  });
+  test('with yaml : valid data(.yml)', () => {
+    const fileBuff = readTestFile('file1.yml');
+    expect(parseData(fileBuff, '.yml')).toEqual({
+      host: 'hexlet.io',
+      timeout: 50,
+      proxy: '123.234.53.22',
+      follow: false,
+    });
+  });
+  test('with yaml : valid data(.yaml)', () => {
+    const fileBuff = readTestFile('file1.yaml');
+    expect(parseData(fileBuff, '.yaml')).toEqual({
+      host: 'hexlet.io',
+      timeout: 50,
+      proxy: '123.234.53.22',
+      follow: false,
+    });
+  });
+  test('with yaml : invalid data', () => {
+    const fileBuff = readTestFile('bad.yml');
+    const logSpy = jest.spyOn(global.console, 'error').mockImplementation();
+    parseData(fileBuff, '.yml');
+    expect(logSpy).toHaveBeenCalledWith('parser error: failed to parse data as YAML');
     logSpy.mockRestore();
   });
   test('with nonexistent format : valid data', () => {

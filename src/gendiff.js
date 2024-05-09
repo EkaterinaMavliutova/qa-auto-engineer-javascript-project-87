@@ -48,7 +48,6 @@ export const compareObjects = (objToCompare, objToCompareWith) => {
   const allKeys = Object.keys(objToCompare).concat(Object.keys(objToCompareWith));
   const uniqueKeys = _.sortBy(allKeys);
   const sortedUniqueKeys = _.sortedUniq(uniqueKeys);
-
   const differences = sortedUniqueKeys.reduce((acc, item) => {
     const isInObjToCompare = Object.hasOwn(objToCompare, item);
     const isInObjToCompareWith = Object.hasOwn(objToCompareWith, item);
