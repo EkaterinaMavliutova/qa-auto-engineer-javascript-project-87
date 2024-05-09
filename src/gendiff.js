@@ -22,8 +22,8 @@ export const readFile = (filePath) => {
     const currentDir = process.cwd();
     const absolutePath = path.resolve(currentDir, filePath);
     return fs.readFileSync(absolutePath);
-  } catch {
-    throw new Error('failed to read file at current directory');
+  } catch (error) {
+    throw new Error(`failed to read ${filePath}`);
   }
 };
 // console.log(readFile('__fixtures__/empty copy.json'));
