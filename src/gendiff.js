@@ -105,8 +105,8 @@ export const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
 
   if (outputFormat === 'json') {
     console.log(JSON.stringify(formattedDiff, null, '\t'));
-  } else {
-    console.log(`${formattedDiff.join('\n')}`);
+    return JSON.stringify(formattedDiff, null, '\t');
   }
+  console.log(`${formattedDiff.join('\n')}`);
   return formattedDiff.join('\n');
 };

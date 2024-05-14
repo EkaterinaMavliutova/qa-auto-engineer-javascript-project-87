@@ -7,13 +7,13 @@ export default (coll) => {
       diff, name, value, changedValue,
     } = item;
     if (diff === null) {
-      acc.push(`  ${name}: ${value}`);
+      acc.push(`    ${name}: ${value}`);
     }
     if (diff !== null) {
-      acc.push(`${diff} ${name}: ${value}`);
+      acc.push(`  ${diff} ${name}: ${value}`);
     }
     if (changedValue !== null) {
-      acc.push(`+ ${name}: ${changedValue}`);
+      acc.push(`  + ${name}: ${changedValue}`);
     }
     return acc;
   }, []);
