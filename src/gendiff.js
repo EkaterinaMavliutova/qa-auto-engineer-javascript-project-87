@@ -97,10 +97,10 @@ export const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
   const obj2 = parseData(fileBuff2, file2Format);
   if (obj1 === undefined || obj2 === undefined) {
     console.error('genDiff error: failed to compare files');
-    return;
+    return undefined;
   }
   const differences = compareObjects(obj1, obj2);
-  console.log(differences); // удалить
+  // console.log(differences); // удалить
   const formattedDiff = formatDifferences(differences, outputFormat);
 
   if (outputFormat === 'json') {
@@ -108,4 +108,5 @@ export const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
   } else {
     console.log(`${formattedDiff.join('\n')}`);
   }
+  return formattedDiff;
 };
