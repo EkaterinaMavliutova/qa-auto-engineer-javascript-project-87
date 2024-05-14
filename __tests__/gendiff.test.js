@@ -92,16 +92,24 @@ describe('compareObjects', () => {
       obj1: {},
       obj2: { proxy: '123.234.', follow: false },
       expected: [
-        { diff: '+', name: 'follow', value: false, changedValue: null },
-        { diff: '+', name: 'proxy', value: '123.234.', changedValue: null },
+        {
+          diff: '+', name: 'follow', value: false, changedValue: null,
+        },
+        {
+          diff: '+', name: 'proxy', value: '123.234.', changedValue: null,
+        },
       ],
     },
     {
       obj1: { proxy: '123.234.', follow: false },
       obj2: {},
       expected: [
-        { diff: '-', name: 'follow', value: false, changedValue: null },
-        { diff: '-', name: 'proxy', value: '123.234.', changedValue: null },
+        {
+          diff: '-', name: 'follow', value: false, changedValue: null,
+        },
+        {
+          diff: '-', name: 'proxy', value: '123.234.', changedValue: null,
+        },
       ],
     },
     { obj1: {}, obj2: {}, expected: [] },
@@ -115,8 +123,12 @@ describe('compareObjects', () => {
     const obj2 = { proxy: '123.234.', follow: false };
     expect(compareObjects(obj1, obj2))
       .toEqual([
-        { diff: null, name: 'follow', value: false, changedValue: null },
-        { diff: null, name: 'proxy', value: '123.234.', changedValue: null },
+        {
+          diff: null, name: 'follow', value: false, changedValue: null,
+        },
+        {
+          diff: null, name: 'proxy', value: '123.234.', changedValue: null,
+        },
       ]);
   });
   test('with 1 extra property in first object', () => {
@@ -124,9 +136,15 @@ describe('compareObjects', () => {
     const obj2 = { proxy: '123.234.', follow: false };
     expect(compareObjects(obj1, obj2))
       .toEqual([
-        { diff: null, name: 'follow', value: false, changedValue: null },
-        { diff: '-', name: 'newProperty', value: 'test', changedValue: null },
-        { diff: null, name: 'proxy', value: '123.234.', changedValue: null },
+        {
+          diff: null, name: 'follow', value: false, changedValue: null,
+        },
+        {
+          diff: '-', name: 'newProperty', value: 'test', changedValue: null,
+        },
+        {
+          diff: null, name: 'proxy', value: '123.234.', changedValue: null,
+        },
       ]);
   });
   test('with 1 extra property in second object', () => {
@@ -134,9 +152,15 @@ describe('compareObjects', () => {
     const obj2 = { proxy: '123.234.', follow: false, newProperty: 'test' };
     expect(compareObjects(obj1, obj2))
       .toEqual([
-        { diff: null, name: 'follow', value: false, changedValue: null },
-        { diff: '+', name: 'newProperty', value: 'test', changedValue: null },
-        { diff: null, name: 'proxy', value: '123.234.', changedValue: null },
+        {
+          diff: null, name: 'follow', value: false, changedValue: null,
+        },
+        {
+          diff: '+', name: 'newProperty', value: 'test', changedValue: null,
+        },
+        {
+          diff: null, name: 'proxy', value: '123.234.', changedValue: null,
+        },
       ]);
   });
   test('objects with same key but different value', () => {
@@ -144,18 +168,20 @@ describe('compareObjects', () => {
     const obj2 = { proxy: '000' };
     expect(compareObjects(obj1, obj2))
       .toEqual([
-        { diff: '-', name: 'proxy', value: '123.234.', changedValue: '000' },
+        {
+          diff: '-', name: 'proxy', value: '123.234.', changedValue: '000',
+        },
       ]);
   });
 });
 
 describe('genDiff', () => {
-  test('2 json : expected result', () => {
+  test('2 json, stylish output : expected result', () => {
     const pathToFile = getFixturePath('file1.json');
     const logSpy = jest.spyOn(global.console, 'log').mockImplementation();
     genDiff(pathToFile, '__fixtures__/file2.json');
     expect(logSpy).toHaveBeenCalledWith(
-      '{\n- follow: false\n  host: hexlet.io\n- proxy: 123.234.53.22\n- timeout: 50\n+ timeout: 20\n+ verbose: true\n}',
+      '{\n  - follow: false\n    host: hexlet.io\n  - proxy: 123.234.53.22\n  - timeout: 50\n  + timeout: 20\n  + verbose: true\n}',
     );
     logSpy.mockRestore();
   });

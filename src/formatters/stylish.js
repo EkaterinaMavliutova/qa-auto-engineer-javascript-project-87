@@ -7,13 +7,13 @@ export default (coll) => {
       diff, name, value, changedValue,
     } = item;
     if (diff === null) {
-      acc.push(`    ${name}: ${value}`);
+      return [...acc, `    ${name}: ${value}`]; // acc.push(`    ${name}: ${value}`);
     }
-    if (diff !== null) {
-      acc.push(`  ${diff} ${name}: ${value}`);
+    if (diff !== null && changedValue !== null) {
+      return [...acc, `  ${diff} ${name}: ${value}`, `  + ${name}: ${changedValue}`]; // acc.push(`  ${diff} ${name}: ${value}`);
     }
-    if (changedValue !== null) {
-      acc.push(`  + ${name}: ${changedValue}`);
+    if (diff !== null && changedValue == null) {
+      return [...acc, `  ${diff} ${name}: ${value}`]; // acc.push(`  + ${name}: ${changedValue}`);
     }
     return acc;
   }, []);

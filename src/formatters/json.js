@@ -7,13 +7,13 @@ export default (coll) => {
       diff, name, value, changedValue,
     } = item;
     if (diff === null) {
-      acc[` ${name}`] = value;
+      return { ...acc, [` ${name}`]: value };// acc[` ${name}`] = value;
     }
     if (diff !== null) {
-      acc[`${diff} ${name}`] = value;
+      return { ...acc, [`${diff} ${name}`]: value };// acc[`${diff} ${name}`] = value;
     }
     if (changedValue !== null) {
-      acc[`+ ${name}`] = changedValue;
+      return { ...acc, [`+ ${name}`]: changedValue };// acc[`+ ${name}`] = changedValue;
     }
     return acc;
   }, {});

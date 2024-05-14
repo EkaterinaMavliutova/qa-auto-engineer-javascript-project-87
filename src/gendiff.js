@@ -55,21 +55,24 @@ export const compareObjects = (objToCompare, objToCompareWith) => {
     const isSameValue = objToCompare[item] === objToCompareWith[item];
     const isEqual = isInObjToCompare && isInObjToCompareWith && isSameValue;
     if (isEqual) {
-      acc.push({
+      return [...acc, {
         diff: null, name: item, value: objToCompare[item], changedValue: null,
-      });
-    } else if (isInObjToCompare && isInObjToCompareWith) {
-      acc.push({
+      }];
+    }
+    if (isInObjToCompare && isInObjToCompareWith) {
+      return [...acc, {
         diff: '-', name: item, value: objToCompare[item], changedValue: objToCompareWith[item],
-      });
-    } else if (isInObjToCompare) {
-      acc.push({
+      }];
+    }
+    if (isInObjToCompare) {
+      return [...acc, {
         diff: '-', name: item, value: objToCompare[item], changedValue: null,
-      });
-    } else if (isInObjToCompareWith) {
-      acc.push({
+      }];
+    }
+    if (isInObjToCompareWith) {
+      return [...acc, {
         diff: '+', name: item, value: objToCompareWith[item], changedValue: null,
-      });
+      }];
     }
     return acc;
   }, []);
@@ -107,6 +110,6 @@ export const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
     console.log(JSON.stringify(formattedDiff, null, '\t'));
     return JSON.stringify(formattedDiff, null, '\t');
   }
-  console.log(`${formattedDiff.join('\n')}`);
+  console.log(formattedDiff.join('\n'));
   return formattedDiff.join('\n');
 };

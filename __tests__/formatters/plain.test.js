@@ -1,16 +1,22 @@
 import formatToPlain from '../../src/formatters/plain.js';
 
-let collToFormat;
-
-beforeAll(() => {
-  collToFormat = [
-    { diff: '-', name: 'follow', value: false, changedValue: null },
-    { diff: null, name: 'host', value: 'hexlet.io', changedValue: null },
-    { diff: '-', name: 'proxy', value: '123.234.53.22', changedValue: null },
-    { diff: '-', name: 'timeout', value: 50, changedValue: 20 },
-    { diff: '+', name: 'verbose', value: true, changedValue: null },
-  ];
-});
+const collToFormat = [
+  {
+    diff: '-', name: 'follow', value: false, changedValue: null,
+  },
+  {
+    diff: null, name: 'host', value: 'hexlet.io', changedValue: null,
+  },
+  {
+    diff: '-', name: 'proxy', value: '123.234.53.22', changedValue: null,
+  },
+  {
+    diff: '-', name: 'timeout', value: 50, changedValue: 20,
+  },
+  {
+    diff: '+', name: 'verbose', value: true, changedValue: null,
+  },
+];
 
 test('format to plain successfully', () => {
   expect(formatToPlain(collToFormat)).toEqual([
