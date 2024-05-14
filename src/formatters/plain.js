@@ -19,16 +19,3 @@ export default (coll) => {
   }, []);
   return formattedColl;
 };
-
-/*const example3 = [
-  {'- follow': false},
-  {'  host': 'hexlet.io'},
-  {'- proxy': '123.234.53.22'},
-  {'- timeout': 50},
-  {'+ timeout': 20},
-  {'+ verbose': true},
-];
-
-console.log(JSON.stringify({'- follow': false, '  host': 'hexlet.io', '+ verbose': true}, null, '\t'));
-console.log(JSON.stringify('"- follow": false'));
-console.log(JSON.stringify(example3, null, '\t'));*/
