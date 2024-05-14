@@ -92,7 +92,7 @@ const config = {
   // moduleNameMapper: {},
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  modulePathIgnorePatterns: ['<rootDir>/__tests__/forTests.js'],
+  modulePathIgnorePatterns: ['<rootDir>/__tests__/utils.js'],
 
   // Activates notifications for test results
   // notify: false,

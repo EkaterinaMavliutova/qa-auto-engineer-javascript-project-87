@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import {
   isEmptyObj, readFile, parseData, compareObjects, genDiff,
 } from '../src/gendiff.js';
-import { getFixturePath, readTestFile } from './forTests.js';
+import { getFixturePath, readTestFile } from './utils.js';
 
 describe('isEmptyObj', () => {
   test('with empty object', () => {
@@ -88,8 +88,22 @@ describe('parseData', () => {
 
 describe('compareObjects', () => {
   test.each([
-    { obj1: {}, obj2: { proxy: '123.234.', follow: false }, expected: ['+ follow: false', '+ proxy: 123.234.'] },
-    { obj1: { proxy: '123.234.', follow: false }, obj2: {}, expected: ['- follow: false', '- proxy: 123.234.'] },
+    {
+      obj1: {},
+      obj2: { proxy: '123.234.', follow: false },
+      expected: [
+        { diff: '+', name: 'follow', value: false, changedValue: null },
+        { diff: '+', name: 'proxy', value: '123.234.', changedValue: null },
+      ],
+    },
+    {
+      obj1: { proxy: '123.234.', follow: false },
+      obj2: {},
+      expected: [
+        { diff: '-', name: 'follow', value: false, changedValue: null },
+        { diff: '-', name: 'proxy', value: '123.234.', changedValue: null },
+      ],
+    },
     { obj1: {}, obj2: {}, expected: [] },
     { obj1: undefined, obj2: { proxy: '123.234.', follow: false }, expected: undefined },
     { obj1: { proxy: '123.234.', follow: false }, obj2: undefined, expected: undefined },
@@ -100,25 +114,38 @@ describe('compareObjects', () => {
     const obj1 = { proxy: '123.234.', follow: false };
     const obj2 = { proxy: '123.234.', follow: false };
     expect(compareObjects(obj1, obj2))
-      .toEqual(['  follow: false', '  proxy: 123.234.']);
+      .toEqual([
+        { diff: null, name: 'follow', value: false, changedValue: null },
+        { diff: null, name: 'proxy', value: '123.234.', changedValue: null },
+      ]);
   });
   test('with 1 extra property in first object', () => {
     const obj1 = { newProperty: 'test', proxy: '123.234.', follow: false };
     const obj2 = { proxy: '123.234.', follow: false };
     expect(compareObjects(obj1, obj2))
-      .toEqual(['  follow: false', '- newProperty: test', '  proxy: 123.234.']);
+      .toEqual([
+        { diff: null, name: 'follow', value: false, changedValue: null },
+        { diff: '-', name: 'newProperty', value: 'test', changedValue: null },
+        { diff: null, name: 'proxy', value: '123.234.', changedValue: null },
+      ]);
   });
   test('with 1 extra property in second object', () => {
     const obj1 = { proxy: '123.234.', follow: false };
     const obj2 = { proxy: '123.234.', follow: false, newProperty: 'test' };
     expect(compareObjects(obj1, obj2))
-      .toEqual(['  follow: false', '+ newProperty: test', '  proxy: 123.234.']);
+      .toEqual([
+        { diff: null, name: 'follow', value: false, changedValue: null },
+        { diff: '+', name: 'newProperty', value: 'test', changedValue: null },
+        { diff: null, name: 'proxy', value: '123.234.', changedValue: null },
+      ]);
   });
   test('objects with same key but different value', () => {
     const obj1 = { proxy: '123.234.' };
     const obj2 = { proxy: '000' };
     expect(compareObjects(obj1, obj2))
-      .toEqual(['- proxy: 123.234.', '+ proxy: 000']);
+      .toEqual([
+        { diff: '-', name: 'proxy', value: '123.234.', changedValue: '000' },
+      ]);
   });
 });
 

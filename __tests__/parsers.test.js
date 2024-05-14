@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { parseJson, parseYaml } from '../src/parsers.js';
-import { readTestFile } from './forTests.js';
+import { readTestFile } from './utils.js';
 
 describe('parseJson', () => {
   test('parse valid json', () => {

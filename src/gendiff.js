@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import process from 'node:process';
 import _ from 'lodash';
 import { parseJson, parseYaml } from './parsers.js';
+import getFormatter from './formatters/index.js';
 
 export const isEmptyObj = (someObject) => {
   if (typeof someObject === 'object') {
@@ -53,43 +54,41 @@ export const compareObjects = (objToCompare, objToCompareWith) => {
     const isInObjToCompareWith = Object.hasOwn(objToCompareWith, item);
     const isSameValue = objToCompare[item] === objToCompareWith[item];
     const isEqual = isInObjToCompare && isInObjToCompareWith && isSameValue;
-
     if (isEqual) {
-      acc.push(`  ${item}: ${objToCompare[item]}`);
-    } else {
-      if (isInObjToCompare) {
-        acc.push(`- ${item}: ${objToCompare[item]}`);
-      }
-      if (isInObjToCompareWith) {
-        acc.push(`+ ${item}: ${objToCompareWith[item]}`);
-      }
+      acc.push({
+        diff: null, name: item, value: objToCompare[item], changedValue: null,
+      });
+    } else if (isInObjToCompare && isInObjToCompareWith) {
+      acc.push({
+        diff: '-', name: item, value: objToCompare[item], changedValue: objToCompareWith[item],
+      });
+    } else if (isInObjToCompare) {
+      acc.push({
+        diff: '-', name: item, value: objToCompare[item], changedValue: null,
+      });
+    } else if (isInObjToCompareWith) {
+      acc.push({
+        diff: '+', name: item, value: objToCompareWith[item], changedValue: null,
+      });
     }
     return acc;
   }, []);
   return differences;
 };
 
-/* export const formatStrings = (someStrings, formatterFunction) => {
-
-  return formattedStrings;
+export const formatDifferences = (coll, format) => {
+  try {
+    const formatColl = getFormatter(format);
+    if (formatColl === undefined) {
+      throw new Error(`format ${format} is not supported`);
+    }
+    return formatColl(coll);
+  } catch (e) {
+    throw new Error(e);
+  }
 };
 
-const formatToPlainText = (text) => {
-
-  return formattedText;
-};
-
-const formatToStylish = (text) => {
-
-  return formattedText;
-};
-
-const formatToJson = (text) => {
-
-  return formattedText;
-};
-*/
-export const genDiff = (pathToFile1, pathToFile2) => {
+export const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
   const fileBuff1 = readFile(pathToFile1);
   const fileBuff2 = readFile(pathToFile2);
   const file1Format = path.extname(pathToFile1);
@@ -101,6 +100,12 @@ export const genDiff = (pathToFile1, pathToFile2) => {
     return;
   }
   const differences = compareObjects(obj1, obj2);
-  // return `{\n${differences.join('\n')}\n}`;
-  console.log(`{\n${differences.join('\n')}\n}`);
+  console.log(differences); // удалить
+  const formattedDiff = formatDifferences(differences, outputFormat);
+
+  if (outputFormat === 'json') {
+    console.log(JSON.stringify(formattedDiff, null, '\t'));
+  } else {
+    console.log(`${formattedDiff.join('\n')}`);
+  }
 };
