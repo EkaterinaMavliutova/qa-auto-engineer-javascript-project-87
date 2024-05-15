@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import process from 'node:process';
 import _ from 'lodash';
-import { parseJson, parseYaml } from './parsers.js';
+import getParser from './parsers.js';
 import getFormatter from './formatters/index.js';
 
 export const isEmptyObj = (someObject) => {
@@ -24,19 +24,18 @@ export const readFile = (filePath) => {
     const absolutePath = path.resolve(currentDir, filePath);
     return fs.readFileSync(absolutePath);
   } catch (error) {
-    throw new Error(`failed to read ${filePath}`);
+    throw new Error(`failed to read '${filePath}'`);
   }
 };
-// console.log(readFile('__fixtures__/empty copy.json'));
-export const parseData = (data, dataFormat) => {
-  const yamlFormats = ['.yaml', '.yml'];
-  if (dataFormat === '.json') {
-    return parseJson(data);
+
+export const parseData = (data, fileExtension) => {
+  try {
+    const parser = getParser(fileExtension);
+    const parsedData = parser(data);
+    return parsedData;
+  } catch (e) {
+    throw new Error(`failed to parse data as '${fileExtension}'`);
   }
-  if (yamlFormats.includes(dataFormat)) {
-    return parseYaml(data);
-  }
-  return undefined;
 };
 
 export const compareObjects = (objToCompare, objToCompareWith) => {
@@ -47,8 +46,8 @@ export const compareObjects = (objToCompare, objToCompareWith) => {
     return [];
   }
   const allKeys = Object.keys(objToCompare).concat(Object.keys(objToCompareWith));
-  const uniqueKeys = _.sortBy(allKeys);
-  const sortedUniqueKeys = _.sortedUniq(uniqueKeys);
+  const sortedKeys = _.sortBy(allKeys);
+  const sortedUniqueKeys = [...new Set(sortedKeys)];
   const differences = sortedUniqueKeys.reduce((acc, item) => {
     const isInObjToCompare = Object.hasOwn(objToCompare, item);
     const isInObjToCompareWith = Object.hasOwn(objToCompareWith, item);
@@ -82,12 +81,9 @@ export const compareObjects = (objToCompare, objToCompareWith) => {
 export const formatDifferences = (coll, format) => {
   try {
     const formatColl = getFormatter(format);
-    if (formatColl === undefined) {
-      throw new Error(`format ${format} is not supported`);
-    }
     return formatColl(coll);
   } catch (e) {
-    throw new Error(e);
+    throw new Error(`failed to format data to '${format}'`);
   }
 };
 
@@ -98,12 +94,7 @@ export const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
   const file2Format = path.extname(pathToFile2);
   const obj1 = parseData(fileBuff1, file1Format);
   const obj2 = parseData(fileBuff2, file2Format);
-  if (obj1 === undefined || obj2 === undefined) {
-    console.error('genDiff error: failed to compare files');
-    return undefined;
-  }
   const differences = compareObjects(obj1, obj2);
-  // console.log(differences); // удалить
   const formattedDiff = formatDifferences(differences, outputFormat);
 
   if (outputFormat === 'json') {

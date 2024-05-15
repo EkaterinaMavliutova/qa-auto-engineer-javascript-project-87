@@ -8,5 +8,7 @@ test.each([
   expect(getFormatter(format)).toBeInstanceOf(Function);
 });
 test('get nonexistent formatter function', () => {
-  expect(getFormatter('fakeFormat')).toBeUndefined();
+  expect(() => {
+    getFormatter('fakeFormat');
+  }).toThrow('output to \'fakeFormat\' is not supported');
 });

@@ -1,19 +1,21 @@
 import yaml from 'js-yaml';
 
-export const parseJson = (text) => {
-  try {
-    return JSON.parse(text);
-  } catch (err) {
-    console.error('parser error: failed to parse data as JSON');
-    return undefined;
-  }
+const parseJson = (text) => JSON.parse(text);
+const parseYaml = (text) => yaml.load(text);
+
+const parsers = {
+  '.json': parseJson,
+  '.yml': parseYaml,
+  '.yaml': parseYaml,
 };
 
-export const parseYaml = (text) => {
+export default (fileExtension) => {
   try {
-    return yaml.load(text);
+    if (parsers[fileExtension] === undefined) {
+      throw new Error(`'${fileExtension}' parsing is not supported`);
+    }
+    return parsers[fileExtension];
   } catch (err) {
-    console.error('parser error: failed to parse data as YAML');
-    return undefined;
+    throw new Error(err);
   }
 };

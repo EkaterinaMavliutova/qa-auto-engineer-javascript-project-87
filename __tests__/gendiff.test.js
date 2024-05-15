@@ -46,23 +46,16 @@ describe('parseData', () => {
   });
   test('with json : invalid data', () => {
     const fileBuff = readTestFile('bad.json');
-    const logSpy = jest.spyOn(global.console, 'error').mockImplementation();
-    parseData(fileBuff, '.json');
-    expect(logSpy).toHaveBeenCalledWith('parser error: failed to parse data as JSON');
-    logSpy.mockRestore();
+    expect(() => {
+      parseData(fileBuff, '.json');
+    }).toThrow('failed to parse data as \'.json\'');
   });
-  test('with yaml : valid data(.yml)', () => {
+  test.each([
+    '.yml',
+    '.yaml',
+  ])('with %s : valid data', (fileExtension) => {
     const fileBuff = readTestFile('file1.yml');
-    expect(parseData(fileBuff, '.yml')).toEqual({
-      host: 'hexlet.io',
-      timeout: 50,
-      proxy: '123.234.53.22',
-      follow: false,
-    });
-  });
-  test('with yaml : valid data(.yaml)', () => {
-    const fileBuff = readTestFile('file1.yaml');
-    expect(parseData(fileBuff, '.yaml')).toEqual({
+    expect(parseData(fileBuff, fileExtension)).toEqual({
       host: 'hexlet.io',
       timeout: 50,
       proxy: '123.234.53.22',
@@ -71,21 +64,18 @@ describe('parseData', () => {
   });
   test('with yaml : invalid data', () => {
     const fileBuff = readTestFile('bad.yml');
-    const logSpy = jest.spyOn(global.console, 'error').mockImplementation();
-    parseData(fileBuff, '.yml');
-    expect(logSpy).toHaveBeenCalledWith('parser error: failed to parse data as YAML');
-    logSpy.mockRestore();
+    expect(() => {
+      parseData(fileBuff, '.yml');
+    }).toThrow('failed to parse data as \'.yml\'');
   });
-  test('with nonexistent format : valid data', () => {
-    const fileBuff = readTestFile('file1.json');
-    expect(parseData(fileBuff, '.qwerty')).toBeUndefined();
-  });
-  test('with nonexistent format : invalid data', () => {
-    const fileBuff = readTestFile('bad.json');
-    expect(parseData(fileBuff, '.qwerty')).toBeUndefined();
+  test.each([
+    '.json',
+    '.yml',
+  ])('with %s: empty data', (fileExtension) => {
+    const fileBuff = readTestFile(`empty${fileExtension}`);
+    expect(parseData(fileBuff, fileExtension)).toEqual({});
   });
 });
-
 describe('compareObjects', () => {
   test.each([
     {
@@ -183,14 +173,6 @@ describe('genDiff', () => {
     expect(logSpy).toHaveBeenCalledWith(
       '{\n  - follow: false\n    host: hexlet.io\n  - proxy: 123.234.53.22\n  - timeout: 50\n  + timeout: 20\n  + verbose: true\n}',
     );
-    logSpy.mockRestore();
-  });
-  test('2 json : error', () => {
-    const pathToFile = getFixturePath('file1.json');
-    const logSpy = jest.spyOn(global.console, 'error').mockImplementation();
-    genDiff(pathToFile, '__fixtures__/bad.json');
-    expect(logSpy).toHaveBeenCalledWith('parser error: failed to parse data as JSON');
-    expect(logSpy).toHaveBeenCalledWith('genDiff error: failed to compare files');
     logSpy.mockRestore();
   });
 });

@@ -8,4 +8,13 @@ const formatters = {
   stylish,
 };
 
-export default (format) => formatters[format];
+export default (format) => {
+  try {
+    if (formatters[format] === undefined) {
+      throw new Error(`output to '${format}' is not supported`);
+    }
+    return formatters[format];
+  } catch (e) {
+    throw new Error(e);
+  }
+};
