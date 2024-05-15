@@ -39,9 +39,6 @@ export const parseData = (data, fileExtension) => {
 };
 
 export const compareObjects = (objToCompare, objToCompareWith) => {
-  if (objToCompare === undefined || objToCompareWith === undefined) {
-    return undefined;
-  }
   if (isEmptyObj(objToCompare) && isEmptyObj(objToCompareWith)) {
     return [];
   }
