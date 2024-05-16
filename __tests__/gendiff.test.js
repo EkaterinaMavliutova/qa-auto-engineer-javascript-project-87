@@ -151,7 +151,7 @@ describe('compareObjects', () => {
         },
       ]);
   });
-  test('objects with same key but different value', () => {
+  test('objects with same keys but different values', () => {
     const obj1 = { proxy: '123.234.' };
     const obj2 = { proxy: '000' };
     expect(compareObjects(obj1, obj2))
