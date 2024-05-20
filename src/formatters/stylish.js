@@ -1,18 +1,18 @@
 const toStylishMap = {
   unchanged({ key, value }) {
-    return `   ${key}: ${value}`;
+    return `    ${key}: ${value}`;
   },
   changed({ key, value1, value2 }) {
     return [
-      `-  ${key}: ${value1}`,
-      `+  ${key}: ${value2}`,
+      `  - ${key}: ${value1}`,
+      `  + ${key}: ${value2}`,
     ];
   },
   deleted({ key, value }) {
-    return `-  ${key}: ${value}`;
+    return `  - ${key}: ${value}`;
   },
   added({ key, value }) {
-    return `+  ${key}: ${value}`;
+    return `  + ${key}: ${value}`;
   },
 };
 
