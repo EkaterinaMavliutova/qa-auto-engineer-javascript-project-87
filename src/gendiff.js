@@ -1,18 +1,11 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import process from 'node:process';
-import _ from 'lodash';
 import getParser from './parsers.js';
 import getFormatter from './formatters/index.js';
+import compareObjects from './compare-objects.js';
 
-export const isEmptyObj = (someObject) => {
-  if (typeof someObject === 'object') {
-    return Object.keys(someObject).length === 0;
-  }
-  return undefined;
-};
-
-export const readFile = (filePath) => {
+const readFile = (filePath) => {
   if (!filePath) {
     return undefined;
   }
@@ -28,54 +21,17 @@ export const readFile = (filePath) => {
   }
 };
 
-export const parseData = (data, fileExtension) => {
+const parseData = (data, dataFormat) => {
   try {
-    const parser = getParser(fileExtension);
+    const parser = getParser(dataFormat);
     const parsedData = parser(data);
     return parsedData;
   } catch (e) {
-    throw new Error(`failed to parse data as '${fileExtension}'`);
+    throw new Error(`failed to parse data as '${dataFormat}'`);
   }
 };
 
-export const compareObjects = (objToCompare, objToCompareWith) => {
-  if (isEmptyObj(objToCompare) && isEmptyObj(objToCompareWith)) {
-    return [];
-  }
-  const allKeys = Object.keys(objToCompare).concat(Object.keys(objToCompareWith));
-  const sortedKeys = _.sortBy(allKeys);
-  const sortedUniqueKeys = [...new Set(sortedKeys)];
-  const differences = sortedUniqueKeys.reduce((acc, item) => {
-    const isInObjToCompare = Object.hasOwn(objToCompare, item);
-    const isInObjToCompareWith = Object.hasOwn(objToCompareWith, item);
-    const isSameValue = objToCompare[item] === objToCompareWith[item];
-    const isEqual = isInObjToCompare && isInObjToCompareWith && isSameValue;
-    if (isEqual) {
-      return [...acc, {
-        diff: null, name: item, value: objToCompare[item], changedValue: null,
-      }];
-    }
-    if (isInObjToCompare && isInObjToCompareWith) {
-      return [...acc, {
-        diff: '-', name: item, value: objToCompare[item], changedValue: objToCompareWith[item],
-      }];
-    }
-    if (isInObjToCompare) {
-      return [...acc, {
-        diff: '-', name: item, value: objToCompare[item], changedValue: null,
-      }];
-    }
-    if (isInObjToCompareWith) {
-      return [...acc, {
-        diff: '+', name: item, value: objToCompareWith[item], changedValue: null,
-      }];
-    }
-    return acc;
-  }, []);
-  return differences;
-};
-
-export const formatDifferences = (coll, format) => {
+const formatDifferences = (coll, format) => {
   try {
     const formatColl = getFormatter(format);
     return formatColl(coll);
@@ -84,20 +40,23 @@ export const formatDifferences = (coll, format) => {
   }
 };
 
-export const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
-  const fileBuff1 = readFile(pathToFile1);
-  const fileBuff2 = readFile(pathToFile2);
-  const file1Format = path.extname(pathToFile1);
-  const file2Format = path.extname(pathToFile2);
-  const obj1 = parseData(fileBuff1, file1Format);
-  const obj2 = parseData(fileBuff2, file2Format);
+const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
+  const data1 = readFile(pathToFile1);
+  const data2 = readFile(pathToFile2);
+  const data1Format = path.extname(pathToFile1).slice(1);
+  const data2Format = path.extname(pathToFile2).slice(1);
+  const obj1 = parseData(data1, data1Format);
+  const obj2 = parseData(data2, data2Format);
   const differences = compareObjects(obj1, obj2);
   const formattedDiff = formatDifferences(differences, outputFormat);
 
-  if (outputFormat === 'json') {
-    console.log(JSON.stringify(formattedDiff, null, '\t'));
-    return JSON.stringify(formattedDiff, null, '\t');
-  }
-  console.log(formattedDiff.join('\n'));
-  return formattedDiff.join('\n');
+  // if (outputFormat === 'json') {
+  //   console.log(JSON.stringify(formattedDiff, null, '\t'));
+  //   return JSON.stringify(formattedDiff, null, '\t');
+  // }
+  // console.log(formattedDiff.join('\n'));
+  // return formattedDiff.join('\n');
+  return formattedDiff;
 };
+
+export default genDiff;
