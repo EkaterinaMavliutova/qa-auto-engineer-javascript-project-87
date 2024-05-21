@@ -1,14 +1,14 @@
-import plain from './plain.js';
-import json from './json.js';
-import stylish from './stylish.js';
+import formatToPlain from './plain.js';
+import formatToJson from './json.js';
+import formatToStylish from './stylish.js';
 
 const formatters = {
-  plain,
-  json,
-  stylish,
+  plain: formatToPlain,
+  json: formatToJson,
+  stylish: formatToStylish,
 };
 
-export default (format) => {
+const getFormetter = (format) => {
   try {
     if (formatters[format] === undefined) {
       throw new Error(`output to '${format}' is not supported`);
@@ -18,3 +18,5 @@ export default (format) => {
     throw new Error(e);
   }
 };
+
+export default getFormetter;
