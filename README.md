@@ -33,4 +33,4 @@ Options:
 <a href="https://asciinema.org/a/ccO79uxKKDo6dH782fXcokvxv" target="_blank"><img src="https://asciinema.org/a/ccO79uxKKDo6dH782fXcokvxv.svg" width="50%" height="50%"/></a>
 
 ### compare JSON and YAML (format: json):
-<a href="https://asciinema.org/a/dX1gfAZjhkQ3pfg9ANzvpLWCD" target="_blank"><img src="https://asciinema.org/a/dX1gfAZjhkQ3pfg9ANzvpLWCD.svg" width="50%" height="50%"/></a>
+<a href="https://asciinema.org/a/hBQLAEOA8Kbp1v2S0HeyQK6Fd" target="_blank"><img src="https://asciinema.org/a/hBQLAEOA8Kbp1v2S0HeyQK6Fd.svg" width="50%" height="50%"/></a>
