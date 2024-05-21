@@ -1,23 +1,71 @@
-// import { expect, jest } from '@jest/globals';
+import { expect } from '@jest/globals';
 import genDiff from '../src/gendiff.js';
-import { getFixturePath } from './utils.js';
+import { getFixturePath, readTestFile } from './utils.js';
 
-describe('genDiff', () => {
+describe('genDiff: different output formats', () => {
   test.each([
     {
       format: 'stylish',
-      expected: '{\n  - follow: false\n    host: hexlet.io\n  - proxy: 123.234.53.22\n  - timeout: 50\n  + timeout: 20\n  + verbose: true\n}',
+      expected: readTestFile('expectedStylishOutput.txt'),
     },
     {
       format: 'plain',
-      expected: 'Property \'follow\' was removed\nProperty \'proxy\' was removed\nProperty \'timeout\' was updated. From 50 to 20\nProperty \'verbose\' was added with value: true',
+      expected: readTestFile('expectedPlainOutput.txt'),
     },
     {
       format: 'json',
-      expected: '[{"key":"follow","type":"deleted","value":false},{"key":"host","type":"unchanged","value":"hexlet.io"},{"key":"proxy","type":"deleted","value":"123.234.53.22"},{"key":"timeout","type":"changed","value1":50,"value2":20},{"key":"verbose","type":"added","value":true}]',
+      expected: readTestFile('expectedJsonOutput.txt'),
     },
   ])('json and yaml, $format output', ({ format, expected }) => {
-    const pathToFile = getFixturePath('file1.json');
-    expect(genDiff(pathToFile, '__fixtures__/file2.yml', format)).toBe(expected);
+    expect(genDiff('__fixtures__/file1.json', '__fixtures__/file2.yml', format)).toBe(expected);
   });
+});
+
+describe('genDiff: exceptions are thrown, default outputFormat', () => {
+  test.each([
+    { pathToFile1: '__fixtures__/bad.json', dataType: 'json' },
+    { pathToFile1: '__fixtures__/bad.yml', dataType: 'yaml' },
+  ])('whith invalid $dataType data', ({ pathToFile1, dataType }) => {
+    expect(() => {
+      genDiff(pathToFile1, '__fixtures__/file2.json');
+    }).toThrow(`failed to parse data as '${dataType}'`);
+  });
+  test('with nonexistent file', () => {
+    expect(() => {
+      genDiff('fakePath/file1.json', '__fixtures__/file2.json');
+    }).toThrow('failed to read \'fakePath/file1.json\'');
+  });
+  test('whith unsupported data type', () => {
+    expect(() => {
+      genDiff('__fixtures__/expectedStylishOutput.txt', '__fixtures__/file2.json');
+    }).toThrow('\'txt\' parsing is not supported');
+  });
+  test('whith unsupported output format', () => {
+    expect(() => {
+      genDiff('__fixtures__/file1.json', '__fixtures__/file2.json', 'fakeFormat');
+    }).toThrow('output to \'fakeFormat\' is not supported');
+  });
+});
+
+describe('genDiff: different file paths (default output format)', () => {
+  test.each([
+    {
+      pathType: 'relative',
+      pathToFile1: '__fixtures__/file1.json',
+      pathToFile2: '__fixtures__/file2.json',
+    },
+    {
+      pathType: 'absolute',
+      pathToFile1: getFixturePath('file1.json'),
+      pathToFile2: getFixturePath('file2.json'),
+    },
+  ])('whith $pathType path', ({ pathToFile1, pathToFile2 }) => {
+    const expected = readTestFile('expectedStylishOutput.txt');
+    expect(genDiff(pathToFile1, pathToFile2)).toBe(expected);
+  });
+});
+
+test('genDiff: whith .yaml and .yml YAML file extenshions', () => {
+  const expected = readTestFile('expectedStylishOutput.txt');
+  expect(genDiff('__fixtures__/file1.yaml', '__fixtures__/file2.yml')).toBe(expected);
 });
