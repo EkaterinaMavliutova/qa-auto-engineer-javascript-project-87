@@ -6,9 +6,6 @@ import getFormatter from './formatters/index.js';
 import compareObjects from './compare-objects.js';
 
 const readFile = (filePath) => {
-  if (!filePath) {
-    return undefined;
-  }
   try {
     if (path.isAbsolute(filePath)) {
       return fs.readFileSync(filePath);
@@ -21,42 +18,44 @@ const readFile = (filePath) => {
   }
 };
 
-const parseData = (data, dataFormat) => {
+const parseData = (data, dataType) => {
+  const parser = getParser(dataType);
   try {
-    const parser = getParser(dataFormat);
     const parsedData = parser(data);
     return parsedData;
   } catch (e) {
-    throw new Error(`failed to parse data as '${dataFormat}'`);
+    throw new Error(`failed to parse data as '${dataType}'`);
   }
 };
 
 const formatDifferences = (coll, format) => {
+  const formatColl = getFormatter(format);
   try {
-    const formatColl = getFormatter(format);
     return formatColl(coll);
   } catch (e) {
     throw new Error(`failed to format data to '${format}'`);
   }
 };
 
+const extensionToDataTypeMap = {
+  '.json': 'json',
+  '.yml': 'yaml',
+  '.yaml': 'yaml',
+};
+
+const getDataType = (extension) => extensionToDataTypeMap[extension] ?? extension.slice(1);
+
 const genDiff = (pathToFile1, pathToFile2, outputFormat = 'stylish') => {
   const data1 = readFile(pathToFile1);
   const data2 = readFile(pathToFile2);
-  const data1Format = path.extname(pathToFile1).slice(1);
-  const data2Format = path.extname(pathToFile2).slice(1);
-  const obj1 = parseData(data1, data1Format);
-  const obj2 = parseData(data2, data2Format);
+  const data1Type = getDataType(path.extname(pathToFile1));
+  const data2Type = getDataType(path.extname(pathToFile2));
+  const obj1 = parseData(data1, data1Type);
+  const obj2 = parseData(data2, data2Type);
   const differences = compareObjects(obj1, obj2);
-  const formattedDiff = formatDifferences(differences, outputFormat);
+  const formattedDifferences = formatDifferences(differences, outputFormat);
 
-  // if (outputFormat === 'json') {
-  //   console.log(JSON.stringify(formattedDiff, null, '\t'));
-  //   return JSON.stringify(formattedDiff, null, '\t');
-  // }
-  // console.log(formattedDiff.join('\n'));
-  // return formattedDiff.join('\n');
-  return formattedDiff;
+  return formattedDifferences;
 };
 
 export default genDiff;

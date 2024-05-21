@@ -42,17 +42,4 @@ const compareObjects = (obj1, obj2) => {
   return differences;
 };
 
-// const example1 = {
-//   host: 'hexlet.io',
-//   timeout: 50,
-//   proxy: '123.234.53.22',
-//   follow: false,
-// };
-// const example2 = {
-//   host: 'hexlet.io',
-//   timeout: 20,
-//   verbose: true,
-// };
-// console.log(compareObjects(example1, example2));
-
 export default compareObjects;
