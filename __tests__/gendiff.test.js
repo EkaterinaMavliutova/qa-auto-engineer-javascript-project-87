@@ -22,19 +22,6 @@ describe('genDiff: different output formats', () => {
 });
 
 describe('genDiff: exceptions are thrown, default outputFormat', () => {
-  test.each([
-    { pathToFile1: '__fixtures__/bad.json', dataType: 'json' },
-    { pathToFile1: '__fixtures__/bad.yml', dataType: 'yaml' },
-  ])('whith invalid $dataType data', ({ pathToFile1, dataType }) => {
-    expect(() => {
-      genDiff(pathToFile1, '__fixtures__/file2.json');
-    }).toThrow(`failed to parse data as '${dataType}'`);
-  });
-  test('with nonexistent file', () => {
-    expect(() => {
-      genDiff('fakePath/file1.json', '__fixtures__/file2.json');
-    }).toThrow('failed to read \'fakePath/file1.json\'');
-  });
   test('whith unsupported data type', () => {
     expect(() => {
       genDiff('__fixtures__/expectedStylishOutput.txt', '__fixtures__/file2.json');

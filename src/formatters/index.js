@@ -8,15 +8,15 @@ const formatters = {
   stylish: formatToStylish,
 };
 
-const getFormetter = (format) => {
+const formatData = (data, format) => {
   try {
     if (formatters[format] === undefined) {
       throw new Error(`output to '${format}' is not supported`);
     }
-    return formatters[format];
+    return formatters[format](data);
   } catch (e) {
     throw new Error(e);
   }
 };
 
-export default getFormetter;
+export default formatData;
